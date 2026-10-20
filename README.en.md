@@ -6,6 +6,8 @@
 
 [简体中文](README.md) | English
 
+[Download for macOS (Apple Silicon)](https://github.com/lxfu1/disk-lens/releases/download/v0.1.0/DiskLens-0.1.0-arm64.dmg) · [Release notes and checksums](https://github.com/lxfu1/disk-lens/releases/tag/v0.1.0)
+
 See where your disk space goes and find large files. DiskLens is a local macOS disk analyzer with directory listings, a largest-files view, and an interactive treemap. It keeps its index up to date using filesystem events.
 
 Native SwiftUI / AppKit interface · Local SQLite index · No third-party runtime dependencies · No accounts, uploads, or telemetry · [MIT](LICENSE)
@@ -22,7 +24,25 @@ Native SwiftUI / AppKit interface · Local SQLite index · No third-party runtim
 - **File actions**: reveal items in Finder, copy paths, and choose an application to open a file. Moving an item to the Trash requires confirmation and a file identity check.
 - **Menu bar and settings**: check free space, configure capacity alerts and launch at login, and manage the index cache. The app remains available in the menu bar after its window closes.
 
-## Build and run
+## Download and install
+
+Download `DiskLens-0.1.0-arm64.dmg` from [GitHub Releases](https://github.com/lxfu1/disk-lens/releases/tag/v0.1.0), open it, and **drag DiskLens into Applications**. Launch it from Applications. This preview requires **macOS 13+ and Apple Silicon (M-series)**; an Intel build is not included. Quit the old process before updating.
+
+### macOS security warnings
+
+**The current package is ad-hoc signed, without Apple Developer ID signing or notarization.** After a browser download, macOS Gatekeeper may block the first launch with an “unidentified developer” or “Apple cannot check it for malicious software” warning. This distribution has not passed Apple's security review.
+
+Only consider allowing it if you have confirmed that the file came from this repository's Release and you trust the app. After attempting to launch it once, open **System Settings → Privacy & Security** and choose **Open Anyway** for the corresponding blocked app, if offered. Availability depends on the macOS version and device management policy. You do not need to disable Gatekeeper system-wide.
+
+If macOS reports that the file is “damaged,” download it again and verify it against the Release's `SHA256SUMS.txt` rather than assuming a false alarm. If it explicitly reports detected malware, do not proceed. SHA-256 verifies download integrity; it does not replace Apple notarization or a security review.
+
+Download the DMG and checksum file into the same directory, then run there:
+
+```sh
+shasum -a 256 -c SHA256SUMS.txt
+```
+
+## Build from source
 
 Requires **macOS 13 or later** and Apple Command Line Tools:
 
@@ -39,7 +59,7 @@ bash scripts/build.sh
 open dist/DiskLens.app
 ```
 
-The build produces `dist/DiskLens.app` for the current machine's architecture with an ad-hoc signature. Installation currently uses a source build; Developer ID signing, notarization, and in-app automatic updates are not provided.
+The build produces `dist/DiskLens.app` for the current machine's architecture with an ad-hoc signature. Neither source builds nor the preview package provide Developer ID signing, notarization, or in-app automatic updates.
 
 You can move the app to Applications and keep it at a stable location. A normal first launch does not automatically scan your entire home directory. Select a directory or click “开始分析” (Start analysis) to build its index.
 
@@ -125,7 +145,7 @@ Usage is based on allocated blocks, with hard links counted once within an index
 
 Moving items to the Trash does not immediately free space, and DiskLens never empties the Trash automatically. Operations on protected system paths, paths outside the current scope, or files whose identity has changed are rejected.
 
-The current index format is schema v5; caches from versions 0.7–0.9 can be read directly. For older v2/v3/v4 databases, quit the app before running `python3 -B scripts/migrate-index.py`. Migration keeps a `.pre-v5` backup and requires additional disk space. See [Index architecture](docs/ARCHITECTURE.md) (Chinese) for migration, rollback, and measurement details.
+The current index format is schema v5. If you used a local development build with a v2/v3/v4 database, quit the app before running `python3 -B scripts/migrate-index.py`. Migration keeps a `.pre-v5` backup and requires additional disk space. See [Index architecture](docs/ARCHITECTURE.md) (Chinese) for migration, rollback, and measurement details.
 
 ## Development and feedback
 

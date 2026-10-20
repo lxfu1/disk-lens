@@ -64,3 +64,15 @@ DISKLENS_CAPTURE_UI=1 bash scripts/check-release.sh
 提交前仅运行与改动相关的检查，并使用 `git diff --check` 检查空白问题。通过 Pull Request 描述具体问题、改动结果、已执行验证及尚未覆盖的场景。
 
 发布应用前还需实际验证系统登录项、通知权限、目标macOS/架构及签名公证。当前本地构建与测试不代表这些分发环节已完成。
+
+## 打包预览版
+
+为当前版本准备 `docs/releases/v<版本号>.md` 后，运行：
+
+```sh
+bash scripts/package-dmg.sh
+```
+
+脚本读取 `Info.plist`，仅构建当前机器架构，生成 `dist/releases/<版本号>/<架构>/` 下的 DMG 和 `SHA256SUMS.txt`。DMG 包含应用、Applications 快捷入口、发布说明和许可证；构建产物不进入 Git。脚本检查架构、本地签名完整性及磁盘映像完整性，不执行 Apple 公证，也不更改正在运行的默认应用包。
+
+发布时将版本标签指向经过检查的提交，把 DMG 与校验文件作为 GitHub Release 附件上传，使用对应版本说明。当前未公证的首个安装包作为预览版发布，并在中英文 README 与 Release 中明确 macOS 拦截风险；签名完整性检查通过不等于 Gatekeeper 放行。

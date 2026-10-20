@@ -6,6 +6,8 @@
 
 简体中文 | [English](README.en.md)
 
+[下载 macOS 安装包（Apple Silicon）](https://github.com/lxfu1/disk-lens/releases/download/v0.1.0/DiskLens-0.1.0-arm64.dmg) · [发布说明与校验值](https://github.com/lxfu1/disk-lens/releases/tag/v0.1.0)
+
 看清目录占用，找到大文件。DiskLens 是本地运行的 macOS 磁盘分析工具，提供目录列表、最大文件与占用地图，并通过文件事件持续更新索引。
 
 原生 SwiftUI / AppKit 界面 · SQLite 本地索引 · 无第三方运行依赖 · 无账号、上传或遥测 · [MIT](LICENSE)
@@ -22,7 +24,25 @@
 - **文件操作**：Finder 定位、复制路径、为文件选择打开方式。移到废纸篓前确认并校验文件身份。
 - **菜单栏与设置**：磁盘剩余空间、容量提醒、登录启动、缓存预算和回收。关闭窗口后仍可从菜单栏打开。
 
-## 构建与启动
+## 下载与安装
+
+在 [GitHub Releases](https://github.com/lxfu1/disk-lens/releases/tag/v0.1.0) 下载 `DiskLens-0.1.0-arm64.dmg`，打开后将 **DiskLens 拖入 Applications**，再从“应用程序”启动。当前预览版要求 **macOS 13+、Apple Silicon（M 系列）**，不包含 Intel 版本；更新前请先退出旧进程。
+
+### macOS 安全提示
+
+**当前安装包仅采用 ad-hoc 签名，尚未通过 Apple Developer ID 签名和公证。** 从浏览器下载后，macOS Gatekeeper 可能提示“无法验证开发者”或“Apple 无法检查其是否包含恶意软件”，并阻止首次启动。这不是已通过 Apple 安全审核的发行包。
+
+只在确认文件来自本仓库的 Release 且信任该应用时，才考虑允许打开：先尝试启动一次，再到 **系统设置 → 隐私与安全性**，找到对应的拦截提示并选择“仍要打开”（若系统提供）。不同 macOS 版本或设备管理策略可能不允许放行；不需要关闭整个系统的 Gatekeeper。
+
+如果提示文件“已损坏”，先重新下载并核对 Release 附带的 `SHA256SUMS.txt`，不要直接认定为误报；如果明确提示检测到恶意软件，请停止打开。SHA-256 只能核对下载完整性，不能代替 Apple 公证或安全审核。
+
+下载 DMG 和校验文件到同一目录后，可在该目录执行：
+
+```sh
+shasum -a 256 -c SHA256SUMS.txt
+```
+
+## 从源码构建
 
 需要 **macOS 13 或更新版本**，并安装 Apple Command Line Tools：
 
@@ -39,7 +59,7 @@ bash scripts/build.sh
 open dist/DiskLens.app
 ```
 
-构建输出为 `dist/DiskLens.app`，仅包含当前机器架构，使用本机 ad-hoc 签名。当前提供源码构建方式，尚未提供 Developer ID 签名、公证或应用内自动更新。
+构建输出为 `dist/DiskLens.app`，仅包含当前机器架构，使用本机 ad-hoc 签名。源码构建和预览安装包均未提供 Developer ID 签名、公证或应用内自动更新。
 
 可将应用放入“应用程序”目录并保持位置固定。首次普通启动不会自动扫描整个用户目录；选择一个目录或点击“开始分析”即可建立索引。
 
@@ -125,7 +145,7 @@ open dist/DiskLens.app
 
 移到废纸篓不会立即释放空间，DiskLens 不会自动清空废纸篓。受保护的系统路径、范围外路径及身份已变化的文件会被拒绝操作。
 
-当前索引格式为 schema v5，0.7–0.9 缓存可直接读取。旧 v2/v3/v4 库需先退出应用，再运行 `python3 -B scripts/migrate-index.py`；迁移保留 `.pre-v5` 备份并需要额外空间。迁移、回退与统计细节见[索引架构](docs/ARCHITECTURE.md)。
+当前索引格式为 schema v5；使用过本地调试版本的用户，如有旧 schema v2/v3/v4 库，需先退出应用，再运行 `python3 -B scripts/migrate-index.py`；迁移保留 `.pre-v5` 备份并需要额外空间。迁移、回退与统计细节见[索引架构](docs/ARCHITECTURE.md)。
 
 ## 开发与反馈
 
