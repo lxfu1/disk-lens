@@ -39,6 +39,8 @@ bash scripts/update-screenshots.sh
 
 该命令只执行主界面与设置的两组定向检查，随后更新 `docs/preview.png`、`docs/screenshots/` 和 `docs/icon.png`。设置页使用替身登录服务，不修改系统登录项；不会扫描用户目录。截图会短暂显示演示窗口，运行后应检查文字、布局、深浅模式与隐私，再提交资源。
 
+文档截图会自动添加适配深浅背景的细描边，保留原始圆角与透明区域；描边写入 PNG，因此 GitHub 的中英文 README 均可直接显示，无需依赖 HTML 样式。未加描边的原图保存在 `.build/documentation-previews/`。
+
 只需捕获主界面进行开发检查时，可运行：
 
 ```sh
